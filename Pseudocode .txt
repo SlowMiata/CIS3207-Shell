@@ -1,0 +1,249 @@
+
+Pseudocode:
+main(argc, argv){
+    if argc  == 2 {
+        batchMode()
+        Just read input from the batch file
+    }
+    if argc == 1{
+        interactiveMode();
+        Print the prompt and read user input
+    }
+    else {
+        too many arguments
+    }
+}
+
+batchMode(){
+
+    read the file and tokenize the commands
+    token(batch file)
+    from there run the commands
+}
+interactiveMode(){
+    while(1){
+        print("myshell> ") //prints the shell name
+
+        //look the user inputs
+
+        getting commands();
+    }
+   
+}
+
+//this looks at the stdin and stores it as a string name commands
+getting commands(){
+
+    getline(commands,sizeofCommands, stdin)
+
+
+return the commands;
+
+
+}
+
+//parsing arguments
+
+//tokenizing the commandline
+token(){
+
+    char* token[size]
+
+    take in the commands and parse them
+    token[0] = strtok(commandline," ");
+   
+  
+   while( token != NULL ) {
+    
+      token[size] = strtok(NULL, " ");
+    
+   }
+   alloc more memory for the token if it gets too big
+   somehow check for the special characters for piping,redirection, output, input, background 
+   return token
+   //catching errors
+   // error if '|' is not between two arguments
+   //error if nothing is after '>>'
+}
+
+
+exectuting the commands(){
+
+    if no pipe or redirection founded while tokenizing, then run the built in
+    else run the redirection and piping
+
+}
+piping(){
+
+    fd[2];
+    fd[0] file descriptor 0 is for reading
+    fd[1] file descriptor 1 is for writing
+    since the child inherent the resources of the parent, they share the same file descriptor
+
+    int ChildPID
+    pipe(fd);
+
+    childPID = fork() //creating a child process to handle the piping
+
+    exec() //to load in new code into the child process
+
+
+    //child process returns 0 if thee child runs successfully;
+    if(childPID == 0)
+    {      
+            Child closes up input, since it is only outputing to another file not getting inputs
+            close(fd[0]);
+
+            write data into fd[1], the output file
+            and then exit() to let the parent 
+
+    }
+    else
+    {
+            Parent closs the output , since it is only getting the input of the file
+            close(fd[1]);
+            then read the data coming from fd[0]
+    }
+
+}
+
+redirection(){
+
+        // if the redirection is '<'
+        
+        use fgets(buffer,sizeof(buffer),stdin)
+
+        //outping the file into another file
+        open the file with open()
+        //get the file descriptor
+        
+        childpid = fork();
+        
+        if(childpid == 0)
+        {       '>',
+               dup2(old FD, new FD)// put the new file into the old FD 
+
+               '>>' appends data
+               open(...,O_APPEND)
+        }
+
+}
+
+//built in commands
+
+___running these commands, use the array returned from token____
+if elements match the name of the functions, call the functions
+ using strcmp()) , == 0, then it is built-in 
+    other then use fork()  and exec()
+
+
+void (*f)(); calling the functions in the array 
+
+cd(directory){
+
+    //open  specified directory
+    get pathname
+
+    chdir(pathname) // changes directory
+    getcwd() //gets current working directory
+
+}
+
+clear(){
+   
+    print a bunch of " \n" to "clear" the screen
+    //\e[1;1H\e[2J")
+}
+
+
+execvp(){
+    remember to include NULL at the end of the array
+}
+
+dir(){
+    //ls
+    using dirent()
+
+    DIR* d;
+    
+    d = opendir(some directory)
+    readdir(d)
+    
+    while((readdir(d) is not 0 or NULL)){
+
+        get the names of the all the files and subdirectories
+        print out the names found in the directory
+
+        readdir(d) //read the next element in the directory
+    }
+
+    close the directory
+}
+
+evniron(){
+     use getenvo()
+    
+}
+
+help(){
+
+//print out out list of commands and the description
+
+" cd <directory> - Change the current default directory to
+<directory>. If the <directory> argument is not present, report
+the current directory. If the directory does not exist an
+appropriate error should be reported. This command should also
+change the PWD environment variable.
+b. clr - Clear the screen.
+c. dir <directory> - List the contents of directory <directory>.
+d. environ - List all the environment strings.
+e. echo <comment> - Display <comment> on the display followed by a
+new line (multiple spaces/tabs may be reduced to a single space).
+f. help - Display the user manual using the more filter.
+g. pause - Pause operation of the shell until 'Enter' is pressed.
+h. quit - Quit the shell.
+i. The shell environment should contain shell=<pathname>/myshell
+where <pathname>/myshell is the full path for the shell
+executable(not a hardwired path back to your directory, but the
+one from which it was executed). "
+
+}
+
+echo(commandline){
+
+    repeat the user input
+
+    for(i = 0; 1 < sizeof(tokenizingcommandline)){
+        print (tokenizingcommandline[i]);
+        print (" ");
+    }
+    print ("\n");
+}
+
+pause(){
+
+    pauses the shell until the \n is enter
+
+    if (getchar() == '\n'){
+        return
+    }
+}
+
+quit(){
+
+    //exit the program
+    exit()
+}
+
+
+
+testplan:
+My test plan is first test indvivial built in function,
+ and when they all work, I will work on tokenizing the 
+ commandline and calling the functions from the command line.
+ I will then work on creating mini test cases for my piping and redirection.
+I think my biggest issue is working with fork() and pipe()
+and how to properly intergrate it into my code. After my interacctive mode works
+ill work on the batch mode. Lastly, I will catch all possible errors.
+
+    

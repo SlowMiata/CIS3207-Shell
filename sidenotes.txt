@@ -1,0 +1,22 @@
+List Of Needed Functions:
+built-in
+    cd()--
+    clear() --
+    dir() --
+    environment()--
+    echo()--
+    help() --
+    pause()--
+    quit() --
+
+    roel van de paer
+
+//read
+//a file has 3 STD file descriptor
+//open 
+
+
+//batch mode when argc == 2
+//interactive mode when argc == 1
+
+
