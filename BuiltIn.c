@@ -1,7 +1,7 @@
 #include "library.h"
 
 
-int cd(){
+int cd(char* input){
 
     char cwd[1000];
 
@@ -9,10 +9,12 @@ int cd(){
     return 0;
 }
 
-int cdWithPath(char* pathname){
-    //chdir(pathname);
+int dir(){
+    
     return 0;
 }
+
+
 
 int environment(){
    // printf("%s",environ());
@@ -21,7 +23,6 @@ int environment(){
 
 int quit(){
     exit(1);
-    return 0;
 }
 
 int help(){
@@ -37,9 +38,10 @@ int help(){
 
 int pause(){
 
-    if ( getchar() == '\n'){
-        return 0;
+    while ( getchar() !='\n'){
+        
     }
+
 return 0;
 }
 

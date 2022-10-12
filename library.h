@@ -8,7 +8,7 @@
 
 
 
-int cd();
+int cd(char* input);
 int help();
 int pause();
 int quit();
