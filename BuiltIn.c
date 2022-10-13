@@ -2,7 +2,7 @@
 
 
 int cd(char* input){
-    if(chdir(input == -1)){
+    if(chdir(input) == -1){
         strerror(errno);
     }
 

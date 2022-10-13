@@ -4,7 +4,7 @@
 //for taking in the input in interactive mode
 char* input(){
     char* buffer;
-    size_t size = 64;
+    size_t size = 0;
 
     
     getline(&buffer,&size, stdin); //stores what is inputted into buffer
@@ -44,75 +44,97 @@ char** tokenizingInput(char* input){
     return token; //token now has an array of commands
 }
 
-/*int externalBuiltin(char* input){
+int externalBuiltin(char** input){
 
     char* bin = "/bin/";
+    char binPath[1000];
+    strcpy(binPath,bin);
+    strcat(binPath,input[0]);
 
 
     pid_t pid = fork();
-
-    if(pid == 0){// in the child
-       // execv();
-       //execute the external built in with the path and the certain argument
-
-    }else{//in the parent
-    wait for the child to finish
-
+    if(pid == -1){
+        printf("%s",strerror(errno));
+        return -1;
     }
 
-    
-    return 0;
-}*/
+    if(pid == 0){// in the child
+        puts("i am the child");
+        execv(binPath,input);
+        printf("%s",strerror(errno));
+        exit(1);      //execute the external built in with the path and the certain argument
 
+
+    }else{//in the parent
+    wait(NULL);
+        puts("i am the parent");
+    
+   // wait for the child to finish
+    }
+
+    return 0;
+}
+
+
+
+//--------------------------------------------------------------------------------//
 char *built[] = {"cd","clear","dir","environment","help","echo","puase","quit"};
 char *special[] = {">",">>","<","|","&"};
 
-int checking(char**token){//checks for built-in and for special commands
-    int j;
-    while(token !=NULL){
-        for(int i = 0; i < 5; i++){
-        if(strcmp(token[0],special[i])== 0){
-            puts("please add an argument beforehand");
-            exit(1);        
-        }
-        }
 
-        for(int i = 0; i < 8; i++){
+
+
+
+// int checking(char**token){//checks for built-in and for special commands
+//     int j;
+//     int check = 0;
+//     while(token !=NULL){
+//         for(int i = 0; i < 5; i++){
+//         if(strcmp(token[0],special[i])== 0){
+//             puts("please add an argument beforehand");
+//             exit(1);        
+//             }
+//         }
+
+//         for(int i = 0; i < 8; i++){
             
-            if(strcmp(token[j],built[i])==0){
+//             if(strcmp(token[0],built[i])!=0){
+//                 check++;
                 
-            }
+//             }
 
+//             j++;
+//         }
+//         if(check == 8){
+//             externalBuiltin(token);
+//         }
+        
 
-        }
-        j++;
-           
-
-    }
-    return 0;
-}
+//     }
+//     return 0;
+// }
 
 
 int batch(char* input){
 
-    FILE* file;
-    file = fopen(input,"rb");
-    char buffer[100];
+    // FILE* file;
+    // file = fopen(input,"rb");
+    // char buffer[100];
     
 
     return 0;
 
 }
 
-char** tokenize;
+
 int interactive(){
     char cwd[1000];
     printf("\n%s\n",getcwd(cwd,sizeof(cwd)));
-    return 0;
-    
     printf("UserShell>");
     char* inputLine = input();
-    tokenize = tokenizingInput(inputLine);    
+    char** tokenize = tokenizingInput(inputLine); 
+     //works up to here
+    externalBuiltin(tokenize);  
     
     return 0;   
 }
