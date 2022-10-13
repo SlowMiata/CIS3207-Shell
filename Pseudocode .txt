@@ -181,7 +181,7 @@ dir(){
 }
 
 evniron(){
-     use getenvo()
+     use getenv()
     
 }
 

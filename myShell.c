@@ -4,10 +4,9 @@
 //for taking in the input in interactive mode
 char* input(){
     char* buffer;
-    size_t size = 32;
+    size_t size = 64;
 
     
-    buffer = (char* )malloc(size);
     getline(&buffer,&size, stdin); //stores what is inputted into buffer
     int length = strlen(buffer);
     if (buffer[length - 1] == '\n'){
@@ -17,52 +16,58 @@ char* input(){
 }
 
 
-
 //tokenizing the input
 char** tokenizingInput(char* input){
-    char* token[] = {NULL};
-    char ** t = token;
+    char changes[strlen(input)];
+    strcpy(changes,input);
+    char** token;
     char* buffer;
-    size_t size = 32;
+    size_t size = 100;
     int i = 0;
-    t = (char**)malloc(size);
-    buffer = strtok(input," "); //remove the extra spaces
+    token = (char**)malloc(size);
+
+
+    buffer = strtok(changes," \t"); //remove the extra spaces
     while(buffer != NULL){//add the tokenize strings into an array of pointers
-        t[i] = buffer;
-        buffer = strtok(NULL, " ");
+        token[i] = buffer;
+        buffer = strtok(NULL, " \t");
         i++;
     }
-    if ( i >= size){//increase the size of the array
-        t = realloc(t,size * 2);
-    }
-    
-    t[i] = NULL;
-    printf("%s\n",t[0]);
+    // if ( i >= size){//increase the size of the array
+    //     token = realloc(token,size * 2);
+    // }
 
-    return t; //token now has an array of commands
+    
+    token[i] = NULL;
+    
+
+    return token; //token now has an array of commands
 }
 
-// int externalBuiltin(char* input){
+/*int externalBuiltin(char* input){
 
-//     char* bin = "/bin/";
+    char* bin = "/bin/";
 
 
-//     pid_t pid = fork();
+    pid_t pid = fork();
 
-//     if(pid == 0){
-//        // execv();
+    if(pid == 0){// in the child
+       // execv();
+       //execute the external built in with the path and the certain argument
 
-//     }
+    }else{//in the parent
+    wait for the child to finish
 
+    }
 
     
-//     return 0;
-// }
+    return 0;
+}*/
 
 char *built[] = {"cd","clear","dir","environment","help","echo","puase","quit"};
-char *special = {">",">>","<","|","&"};
+char *special[] = {">",">>","<","|","&"};
 
-int checking(char**token){
+int checking(char**token){//checks for built-in and for special commands
     int j;
     while(token !=NULL){
         for(int i = 0; i < 5; i++){
@@ -74,9 +79,7 @@ int checking(char**token){
 
         for(int i = 0; i < 8; i++){
             
-
             if(strcmp(token[j],built[i])==0){
-
                 
             }
 
@@ -90,9 +93,12 @@ int checking(char**token){
 }
 
 
+int batch(char* input){
 
-
-int batch(){
+    FILE* file;
+    file = fopen(input,"rb");
+    char buffer[100];
+    
 
     return 0;
 
@@ -100,25 +106,33 @@ int batch(){
 
 char** tokenize;
 int interactive(){
+    char cwd[1000];
+    printf("\n%s\n",getcwd(cwd,sizeof(cwd)));
+    return 0;
+    
     printf("UserShell>");
     char* inputLine = input();
-    tokenize = tokenizingInput(inputLine);
-    return 0;
+    tokenize = tokenizingInput(inputLine);    
+    
+    return 0;   
 }
 
 
-int main(int argc, char** argv){
+int main(int argc, char** argv, char**envp){
+
+    
 
     if(argc == 1){
         interactive(); //can take inputs in from stdin
     }
     if ( argc == 2){
-        batch(); //execute commands from a file
+        batch(argv[1]); //execute commands from a file
     }
     if (argc >= 3){
         puts("too many arguments");
         exit(3);
     }
+
     
    
 
