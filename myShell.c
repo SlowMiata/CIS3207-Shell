@@ -6,7 +6,6 @@ char* input(){
     char* buffer;
     size_t size = 0;
 
-    
     getline(&buffer,&size, stdin); //stores what is inputted into buffer
     int length = strlen(buffer);
     if (buffer[length - 1] == '\n'){
@@ -14,7 +13,6 @@ char* input(){
     } 
     return buffer;
 }
-
 
 //tokenizing the input
 char** tokenizingInput(char* input){
@@ -37,10 +35,8 @@ char** tokenizingInput(char* input){
     //     token = realloc(token,size * 2);
     // }
 
-    
     token[i] = NULL;
     
-
     return token; //token now has an array of commands
 }
 
@@ -50,7 +46,6 @@ int externalBuiltin(char** input){
     char binPath[1000];
     strcpy(binPath,bin);
     strcat(binPath,input[0]);
-
 
     pid_t pid = fork();
     if(pid == -1){
@@ -64,7 +59,6 @@ int externalBuiltin(char** input){
         printf("%s",strerror(errno));
         exit(1);      //execute the external built in with the path and the certain argument
 
-
     }else{//in the parent
         wait(NULL);
         puts("i am the parent");
@@ -74,14 +68,10 @@ int externalBuiltin(char** input){
 
     return 0;   
 }
-
-
-
 //--------------------------------------------------------------------------------//
-char *built[] = {"cd","clear","dir","environment","help","echo","puase","quit"};
+char *built[] = {"cd","clear","dir","environ","help","echo","puase","quit"};
 char *special[] = {">",">>","<","|","&"};
 //--------------------------------------------------------------------------------//
-
 
 // int executing(char** input){
 //     /*
@@ -105,10 +95,6 @@ char *special[] = {">",">>","<","|","&"};
 //     return 0;
 // }
 
-
-
-
-
 int checking(char**token){
     int i = 0;
     int j = 0;
@@ -117,58 +103,102 @@ int checking(char**token){
     int inputFile = 0;
     int AppendFile = 0;
     int currentLocation = 0;
+    char* beforeSpeical[] = {NULL};
     
 
     //first check for speical characters
     while(token[i] != NULL){
         //for outputing to another file
         if( strcmp( token[i], ">")== 0){
+            if (token[i + 1] == NULL){
+                printf("%s",strerror(errno));
+                exit(-1);
+            }
+        }
             token[i] == NULL;
             outputFile = 1;
             currentLocation = i;
             //call redirection(with the apporiate flags)
+            //function to set the file desciptors
+            redirection(token,outputFile,inputFile,AppendFile,currentLocation);
+            
         }
         //for appending to another file
         else if(strcmp( token[i], "<<")== 0){
+            if (token[i + 1] == NULL){
+                printf("%s",strerror(errno));
+                exit(-1);
+            }
             token[i] = NULL;
             AppendFile = 1;
-
-
+            currentLocation = i;
+            redirection(token,outputFile,inputFile,AppendFile,currentLocation);
+            
+        }
+        //for inputing into another file
+        else if(strcmp( token[i], ">")== 0){
+            if (token[i + 1] == NULL){
+                printf("%s",strerror(errno));
+                exit(-1);
+            }
+            token[i] = NULL;
+            inputFile = 1;
+            currentLocation = i;
+            redirection(token,outputFile,inputFile,AppendFile,currentLocation);
+            
         }
 
-
-        
-
         i++;
+        //going to have add pipe and background in here
     }
+    //next have to check if there are builtins with the special characters
+    
+        if(strcmp(token[0], "cd") == 0){
+            //run the change cd function
+            //cd(token);
 
-
-    // int j;
-    // int check = 0;
-    // while(token !=NULL){
-    //     for(int i = 0; i < 5; i++){
-    //     if(strcmp(token[0],special[i])== 0){
-    //         puts("please add an argument beforehand");
-    //         exit(1);        
-    //         }
-    //     }
-
-    //     for(int i = 0; i < 8; i++){
+        }
+        else if(strcmp(token[0], "clear") == 0){
+            //clear();
             
-    //         if(strcmp(token[0],built[i])!=0){
-    //             check++;
-                
-    //         }
+        }
+        else if(strcmp(token[0], "dir") == 0){
+            //dir(token);
+            
+        }
+        else if(strcmp(token[0], "environ") == 0){
 
-    //         j++;
-    //     }
-    //     if(check == 8){
-    //         externalBuiltin(token);
-    //     }
-        
+            //enviro(token);
+    
+            
+        }
+        else if(strcmp(token[0], "help") == 0){
+           // help();
+            
+        }
+        else if(strcmp(token[0], "echo") == 0){
+            //echo(token);
+            
+        }
+        else if(strcmp(token[0], "pause") == 0){
+           // pause();
+            
+        }
+        else if(strcmp(token[0], "quit") == 0){
+           // quit();
+            
+        }
+        else{
+            //run the extranalbuiltin command;
+            //externalBuiltin(token);
 
-    // }
-    return 0;
+        }
+    //set the file descriptors back to normal
+    int Originalstdin = dup(STDIN_FILENO);
+    int Originalstdou = dup(STDOUT_FILENO);
+
+
+    return 0;   
 }
 
 
@@ -191,8 +221,7 @@ int interactive(){
     printf("UserShell>");
     char* inputLine = input();
     char** tokenize = tokenizingInput(inputLine); 
-    //externalBuiltin(tokenize);  
- 
+
     return 0;   
 }
 
@@ -209,6 +238,5 @@ int main(int argc, char** argv, char**envp){
         puts("too many arguments");
         exit(3);
     }
-
    return 0;
 }

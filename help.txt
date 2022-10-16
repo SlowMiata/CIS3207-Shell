@@ -1,3 +1,30 @@
-                Help manual
+                                            Help manual
+
+                    cd  - changes the current directory path
+                        if no arugment is passed with CD, then print current working directory
+                        if there is an arguemnt, change the directory to the arugment
+
+                    dir - prints the files and subdirectories
+                        if no arugment are passed with dir, then print files and subdirectories of the current directory
+                        if ther is an arugment, print the files and subdirectories of the specified directory
+                    
+                    echo - prints whatever argument the user inputs
+
+                    environ - prints all the environment strings
+
+                    help - opens the help manual
+
+                    pause - pauses the shell until the user Enter
+
+                    quit - exits out the shell
+
+                    clear - clears the terminal
+                    
+
+
+
+
+                    
+
 
             

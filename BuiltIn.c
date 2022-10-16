@@ -1,8 +1,8 @@
 #include "library.h"
 
 
-int cd(char* input){
-    if(chdir(input) == -1){
+int cd(char** input){ //working
+    if(chdir(input[1]) == -1){
         strerror(errno);
     }
 
@@ -12,9 +12,15 @@ int cd(char* input){
 
 }
 
-int dir(char* input){
-    DIR* d = opendir(input);
-    if (d == NULL){
+int dir(char** input){//working
+
+    DIR* d;
+    if(input[1] == NULL){
+        d = opendir(".");
+    }else{
+        d = opendir(input[1]);
+    } 
+     if (d == NULL){
         puts("this directory doesn't exist");
 
         return -1; 
@@ -35,30 +41,35 @@ int dir(char* input){
     return 0;
 }
 
+// int echo(char* input){//working but need working with parameters
 
-int echo(char* input){
-
-
-    char copy[strlen(input)];
-    strcpy(copy,input);
+//     char copy[strlen(input)];
+//     strcpy(copy,input);
     
 
-    char* buffer;
-    buffer = strtok(copy," \t");
-    while(buffer != NULL){
-        printf("%s ",buffer);
-        buffer = strtok(NULL, " \t");
-    }
-    puts(" ");
+//     char* buffer;
+//     buffer = strtok(copy," \t");
+//     while(buffer != NULL){
+//         printf("%s ",buffer);
+//         buffer = strtok(NULL, " \t");
+//     }
+//     puts(" ");
 
+//     return 0;
+// }
+
+int echo(char** input){ //working
+    int i = 0;
+    while(token[i] != NULL){
+        printf("%s ",token[i]);
+        i++;
+    }
     return 0;
 }
 
-
-
-int environ(char** input){ //NOT FUCKING WORKING
+int enviro(char** input){ //working
     int i = 0;
-    while(input != NULL){
+    while(input[i] != NULL){
         
         printf("%s:%s",(input[i]),getenv(input[i]));
         i++;
@@ -67,11 +78,11 @@ int environ(char** input){ //NOT FUCKING WORKING
     return 0;
 }
 
-int quit(){
+int quit(){//working
     exit(1);
 }
 
-int help(){
+int help(){ //need to use exec() 
 
     FILE* file;
     file = fopen("help.txt","r");
@@ -82,12 +93,11 @@ int help(){
 }
 
 
-int pause(){
+int pause(){ //working
 
     while ( getchar() !='\n'){
         
     }
-
 return 0;
 }
 

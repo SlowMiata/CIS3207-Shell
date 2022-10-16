@@ -14,11 +14,13 @@
 
 
 
-int cd(char* input);
+int cd(char** input);
 int help();
 int pause();
 int quit();
-int echo(char* input);
+int echo(char** input);
 int clear();
-int dir(char* input);
-int environ(char** input);
+int dir(char** input);
+int enviro(char** input);
+
+int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation);
