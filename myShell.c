@@ -66,13 +66,13 @@ int externalBuiltin(char** input){
 
 
     }else{//in the parent
-    wait(NULL);
+        wait(NULL);
         puts("i am the parent");
     
    // wait for the child to finish
     }
 
-    return 0;
+    return 0;   
 }
 
 
@@ -80,39 +80,96 @@ int externalBuiltin(char** input){
 //--------------------------------------------------------------------------------//
 char *built[] = {"cd","clear","dir","environment","help","echo","puase","quit"};
 char *special[] = {">",">>","<","|","&"};
+//--------------------------------------------------------------------------------//
+
+
+// int executing(char** input){
+//     /*
+//     int PipeFlag = 0;
+//     int StdoutFlag = 0;
+//     int StdinFlag = 0;
+//     int ExternalFlag = 0;
+//     int BuiltInFlag = 0;
+
+//     first check if there are speical characters in the input
+//         if there are set the the flag to one
+//         then check if the first token is external
+//             if it is, set the externtalFlag = 1
+//         if the first token is equal to one of the builtin
+//             set the flag to 1;
 
 
 
-
-
-// int checking(char**token){//checks for built-in and for special commands
-//     int j;
-//     int check = 0;
-//     while(token !=NULL){
-//         for(int i = 0; i < 5; i++){
-//         if(strcmp(token[0],special[i])== 0){
-//             puts("please add an argument beforehand");
-//             exit(1);        
-//             }
-//         }
-
-//         for(int i = 0; i < 8; i++){
-            
-//             if(strcmp(token[0],built[i])!=0){
-//                 check++;
-                
-//             }
-
-//             j++;
-//         }
-//         if(check == 8){
-//             externalBuiltin(token);
-//         }
-        
-
-//     }
+    
+//     */
 //     return 0;
 // }
+
+
+
+
+
+int checking(char**token){
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    int outputFile = 0;
+    int inputFile = 0;
+    int AppendFile = 0;
+    int currentLocation = 0;
+    
+
+    //first check for speical characters
+    while(token[i] != NULL){
+        //for outputing to another file
+        if( strcmp( token[i], ">")== 0){
+            token[i] == NULL;
+            outputFile = 1;
+            currentLocation = i;
+            //call redirection(with the apporiate flags)
+        }
+        //for appending to another file
+        else if(strcmp( token[i], "<<")== 0){
+            token[i] = NULL;
+            AppendFile = 1;
+
+
+        }
+
+
+        
+
+        i++;
+    }
+
+
+    // int j;
+    // int check = 0;
+    // while(token !=NULL){
+    //     for(int i = 0; i < 5; i++){
+    //     if(strcmp(token[0],special[i])== 0){
+    //         puts("please add an argument beforehand");
+    //         exit(1);        
+    //         }
+    //     }
+
+    //     for(int i = 0; i < 8; i++){
+            
+    //         if(strcmp(token[0],built[i])!=0){
+    //             check++;
+                
+    //         }
+
+    //         j++;
+    //     }
+    //     if(check == 8){
+    //         externalBuiltin(token);
+    //     }
+        
+
+    // }
+    return 0;
+}
 
 
 int batch(char* input){
@@ -130,19 +187,17 @@ int batch(char* input){
 int interactive(){
     char cwd[1000];
     printf("\n%s\n",getcwd(cwd,sizeof(cwd)));
+    //need to add the while(1) to keep the file running
     printf("UserShell>");
     char* inputLine = input();
     char** tokenize = tokenizingInput(inputLine); 
-     //works up to here
-    externalBuiltin(tokenize);  
-    
+    //externalBuiltin(tokenize);  
+ 
     return 0;   
 }
 
 
 int main(int argc, char** argv, char**envp){
-
-    
 
     if(argc == 1){
         interactive(); //can take inputs in from stdin
@@ -155,9 +210,5 @@ int main(int argc, char** argv, char**envp){
         exit(3);
     }
 
-    
-   
-
-    
    return 0;
 }
