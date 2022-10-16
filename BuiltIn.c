@@ -12,13 +12,13 @@ int cd(char** input){ //working
 
 }
 
-int dir(char** input){//working
+int dir(char** input){//working , have to do full path, like ./../etc to get
 
     DIR* d;
     if(input[1] == NULL){
         d = opendir(".");
     }else{
-        d = opendir(input[1]);
+        d = opendir(input[i]);
     } 
      if (d == NULL){
         puts("this directory doesn't exist");
@@ -37,6 +37,7 @@ int dir(char** input){//working
         directory = readdir(d); 
     }
     closedir(d);
+    puts(" ");
 
     return 0;
 }
@@ -99,6 +100,11 @@ int pause(){ //working
         
     }
 return 0;
+}
+
+int clear(){
+    printf("\e[1;1H\e[2J");
+    return 0;
 }
 
 

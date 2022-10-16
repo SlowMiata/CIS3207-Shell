@@ -97,13 +97,13 @@ char *special[] = {">",">>","<","|","&"};
 
 int checking(char**token){
     int i = 0;
-    int j = 0;
-    int k = 0;
     int outputFile = 0;
     int inputFile = 0;
     int AppendFile = 0;
     int currentLocation = 0;
     char* beforeSpeical[] = {NULL};
+    int Originalstdin = dup(STDIN_FILENO);
+    int Originalstdou = dup(STDOUT_FILENO);
     
 
     //first check for speical characters
@@ -111,11 +111,10 @@ int checking(char**token){
         //for outputing to another file
         if( strcmp( token[i], ">")== 0){
             if (token[i + 1] == NULL){
-                printf("%s",strerror(errno));
-                exit(-1);
+                puts("invalid argument");
+                return 0;
             }
-        }
-            token[i] == NULL;
+            token[i] = NULL;
             outputFile = 1;
             currentLocation = i;
             //call redirection(with the apporiate flags)
@@ -126,8 +125,8 @@ int checking(char**token){
         //for appending to another file
         else if(strcmp( token[i], "<<")== 0){
             if (token[i + 1] == NULL){
-                printf("%s",strerror(errno));
-                exit(-1);
+                puts("invalid argument");
+                return 0;
             }
             token[i] = NULL;
             AppendFile = 1;
@@ -138,8 +137,8 @@ int checking(char**token){
         //for inputing into another file
         else if(strcmp( token[i], ">")== 0){
             if (token[i + 1] == NULL){
-                printf("%s",strerror(errno));
-                exit(-1);
+                puts("invalid argument");
+                return 0;
             }
             token[i] = NULL;
             inputFile = 1;
@@ -159,11 +158,11 @@ int checking(char**token){
 
         }
         else if(strcmp(token[0], "clear") == 0){
-            //clear();
+            clear();
             
         }
         else if(strcmp(token[0], "dir") == 0){
-            //dir(token);
+            dir(token);
             
         }
         else if(strcmp(token[0], "environ") == 0){
@@ -185,17 +184,20 @@ int checking(char**token){
             
         }
         else if(strcmp(token[0], "quit") == 0){
-           // quit();
+            quit();
             
         }
         else{
             //run the extranalbuiltin command;
-            //externalBuiltin(token);
+            externalBuiltin(token);
 
         }
     //set the file descriptors back to normal
-    int Originalstdin = dup(STDIN_FILENO);
-    int Originalstdou = dup(STDOUT_FILENO);
+    
+    dup2(Originalstdou, STDOUT_FILENO);
+    dup2(Originalstdin, STDIN_FILENO);
+    close( Originalstdou);
+    close(Originalstdin);
 
 
     return 0;   
@@ -205,7 +207,7 @@ int checking(char**token){
 int batch(char* input){
 
     // FILE* file;
-    // file = fopen(input,"rb");
+    // file = open(input,"O_readit");
     // char buffer[100];
     
 

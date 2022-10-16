@@ -42,7 +42,7 @@
 // }
 
 
-int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation){
+int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation){//still need adjustments, not able to read .txt files
 
     
     int OutputFile;
