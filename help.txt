@@ -19,12 +19,7 @@
                     quit - exits out the shell
 
                     clear - clears the terminal
-                    
+                
 
+                
 
-
-
-                    
-
-
-            

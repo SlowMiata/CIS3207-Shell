@@ -1,5 +1,7 @@
 #include "library.h"
 
+char ** environment;
+
 
 //for taking in the input in interactive mode
 char* input(){
@@ -54,14 +56,14 @@ int externalBuiltin(char** input){
     }
 
     if(pid == 0){// in the child
-        puts("i am the child");
+        //puts("i am the child");
         execv(binPath,input);
         printf("%s",strerror(errno));
         exit(1);      //execute the external built in with the path and the certain argument
 
     }else{//in the parent
         wait(NULL);
-        puts("i am the parent");
+        //puts("i am the parent");
     
    // wait for the child to finish
     }
@@ -101,20 +103,21 @@ int checking(char**token){
     int inputFile = 0;
     int AppendFile = 0;
     int currentLocation = 0;
-    char* beforeSpeical[] = {NULL};
+    //int pipeFile = 0;
     int Originalstdin = dup(STDIN_FILENO);
     int Originalstdou = dup(STDOUT_FILENO);
     
 
     //first check for speical characters
     while(token[i] != NULL){
+
         //for outputing to another file
         if( strcmp( token[i], ">")== 0){
             if (token[i + 1] == NULL){
                 puts("invalid argument");
                 return 0;
             }
-            token[i] = NULL;
+            //token[i] = NULL;
             outputFile = 1;
             currentLocation = i;
             //call redirection(with the apporiate flags)
@@ -123,28 +126,28 @@ int checking(char**token){
             
         }
         //for appending to another file
-        else if(strcmp( token[i], "<<")== 0){
+        else if(strcmp( token[i], ">>")== 0){
             if (token[i + 1] == NULL){
                 puts("invalid argument");
                 return 0;
             }
-            token[i] = NULL;
+            //token[i] = NULL;
             AppendFile = 1;
             currentLocation = i;
             redirection(token,outputFile,inputFile,AppendFile,currentLocation);
             
         }
-        //for inputing into another file
-        else if(strcmp( token[i], ">")== 0){
+        //for inputing into another file            //not working right now
+        else if(strcmp( token[i], "<")== 0){
             if (token[i + 1] == NULL){
                 puts("invalid argument");
                 return 0;
             }
-            token[i] = NULL;
+            //token[i] = NULL;
             inputFile = 1;
             currentLocation = i;
             redirection(token,outputFile,inputFile,AppendFile,currentLocation);
-            
+
         }
 
         i++;
@@ -154,7 +157,7 @@ int checking(char**token){
     
         if(strcmp(token[0], "cd") == 0){
             //run the change cd function
-            //cd(token);
+            cd(token);
 
         }
         else if(strcmp(token[0], "clear") == 0){
@@ -166,21 +169,19 @@ int checking(char**token){
             
         }
         else if(strcmp(token[0], "environ") == 0){
-
-            //enviro(token);
+            enviro(environment);
     
-            
         }
         else if(strcmp(token[0], "help") == 0){
-           // help();
+            help2();
             
         }
         else if(strcmp(token[0], "echo") == 0){
-            //echo(token);
+            echo(token);
             
         }
         else if(strcmp(token[0], "pause") == 0){
-           // pause();
+            pause();
             
         }
         else if(strcmp(token[0], "quit") == 0){
@@ -196,7 +197,7 @@ int checking(char**token){
     
     dup2(Originalstdou, STDOUT_FILENO);
     dup2(Originalstdin, STDIN_FILENO);
-    close( Originalstdou);
+    close(Originalstdou);
     close(Originalstdin);
 
 
@@ -218,12 +219,16 @@ int batch(char* input){
 
 int interactive(){
     char cwd[1000];
-    printf("\n%s\n",getcwd(cwd,sizeof(cwd)));
-    //need to add the while(1) to keep the file running
-    printf("UserShell>");
-    char* inputLine = input();
-    char** tokenize = tokenizingInput(inputLine); 
+    while(1){
+        printf("\n%s\n",getcwd(cwd,sizeof(cwd)));
+        //need to add the while(1) to keep the file running
+        printf("UserShell>");
+        char* inputLine = input();
+        char** tokenize = tokenizingInput(inputLine);
+        checking(tokenize); 
 
+    }
+    
     return 0;   
 }
 
@@ -231,6 +236,7 @@ int interactive(){
 int main(int argc, char** argv, char**envp){
 
     if(argc == 1){
+        environment = envp;
         interactive(); //can take inputs in from stdin
     }
     if ( argc == 2){
@@ -240,5 +246,6 @@ int main(int argc, char** argv, char**envp){
         puts("too many arguments");
         exit(3);
     }
+
    return 0;
 }

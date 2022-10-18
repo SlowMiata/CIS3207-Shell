@@ -13,14 +13,13 @@
 int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation);
 int externalBuiltin(char** input);
 
+char*enviroment[] = {NULL};
 
-
-
-int environt(char** input){ //NOT FUCKING WORKING 
+int environt(char** input){ 
     int i = 0;
     while(input[i]!= NULL){
         
-        printf("%s: %s\n",(input[i]),getenv(input[i]));
+        printf("%s: %s\n",(input[i]);
         i++;
     }
 
@@ -91,10 +90,6 @@ int echo(char** input){
 
 int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation){
 
-
-
-    
-
     
     int OutputFile;
     int InputFile;
@@ -147,20 +142,25 @@ char** tokenizingInput(char* input){
     char* buffer;
     size_t size = 100;
     int i = 0;
+    int j =0;
     token = (char**)malloc(size);
-
 
     buffer = strtok(changes," \t"); //remove the extra spaces
     while(buffer != NULL){//add the tokenize strings into an array of pointers
         token[i] = buffer;
         buffer = strtok(NULL, " \t");
         i++;
+        
     }
     // if ( i >= size){//increase the size of the array
     //     token = realloc(token,size * 2);
     // }
 
     token[i] = NULL;
+    while(token[j]!= NULL){
+        printf("%s\n ",token[j]);
+        j++;
+    }
     
     return token; //token now has an array of commands
 }
@@ -179,14 +179,14 @@ int externalBuiltin(char** input){
     }
 
     if(pid == 0){// in the child
-        puts("i am the child");
+        //puts("i am the child");
         execv(binPath,input);
         printf("%s",strerror(errno));
         exit(1);      //execute the external built in with the path and the certain argument
 
     }else{//in the parent
         wait(NULL);
-        puts("i am the parent");
+       // puts("i am the parent");
     
    // wait for the child to finish
     }
@@ -238,7 +238,7 @@ int checking(char**token){
                 puts("invalid argument");
                 return 0;
             }
-           // token[i] == NULL;
+           // token[i] = NULL;
             outputFile = 1;
             currentLocation = i;
             //call redirection(with the apporiate flags)
@@ -291,7 +291,7 @@ int checking(char**token){
         }
         else if(strcmp(token[0], "environ") == 0){
 
-            //enviro(token);
+            enviro(enviroment);
     
             
         }
@@ -337,29 +337,23 @@ int main(int argc, char **argv, char** envp){
     char *built[] = {"cd","clear","dir","environment","help","echo","puase","quit", NULL};
     char *special[] = {">",">>","<","|","&"};
     char *test[] = {"dir",".vscode"};
-    // printf("%d",(&special)[1]- special);
-    // printf("%d",sizeof(built)/sizeof(built[0]));
 
-    //environt(envp);
-    //pause();
-
-    //quit();
-    //puts("hello world");
-    //dir(test);
-    //echo(built);
+    enviroment = envp;
     int i = 0;
     char cwd[1000];
     printf("\n%s\n",getcwd(cwd,sizeof(cwd)));
-    //need to add the while(1) to keep the file running
-    //while(1){
+   
+    while(1){
         printf("UserShell>");
         char* inputLine = input();
-        printf("%s",inputLine);
+    
         char** tokenize = tokenizingInput(inputLine); 
-        printf("%s",tokenize[2]);
-        //checking(tokenize);
+    
 
-    //}
+        printf("%s",tokenize[0]);
+        checking(tokenize);
+
+    }
     
     
     

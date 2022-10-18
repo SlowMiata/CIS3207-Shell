@@ -42,7 +42,7 @@
 // }
 
 
-int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation){//still need adjustments, not able to read .txt files
+int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation){//still need adjustments, doesnt work the first time it is inputted
 
     
     int OutputFile;
@@ -50,29 +50,34 @@ int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int curren
 
     //for >
     if(ReOuput == 1){
+        //printf("%s",input[currentLocation+1]);
+        input[currentLocation] = NULL;
         OutputFile = open(input[currentLocation+1],O_WRONLY | O_CREAT | O_TRUNC,0777);
         dup2(OutputFile,STDOUT_FILENO);
     }
     //for >>
     else if(ReAppend == 1){
+        input[currentLocation] = NULL;
         OutputFile = open(input[currentLocation+1],O_WRONLY | O_CREAT | O_APPEND,0777);
         dup2(OutputFile,STDOUT_FILENO);
         
     }
     //for <
     else if(ReInput== 1){
+        input[currentLocation] = NULL;
         InputFile = open(input[currentLocation+1],O_RDONLY, 0777);
-        dup2(InputFile,STDOUT_FILENO);
+        dup2(InputFile,STDIN_FILENO);
+
 
     }
 
     return 0;
 }
 
-int pipe(){
+// int pipe(){
 
     
-    return 0;
-}
+//     return 0;
+// }
 
 //strchar

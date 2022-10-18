@@ -24,4 +24,9 @@ int clear();
 int dir(char** input);
 int enviro(char** input);
 
+int help2();
+
+
+int externalBuiltin(char** input);
+
 int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation);

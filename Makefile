@@ -1,2 +1,2 @@
-make: myShell.c BuiltIn.c
-	gcc  -o MyShell myShell.c BuiltIn.c -Wall -I.
+make: myShell.c BuiltIn.c Special.c
+	gcc  -o MyShell myShell.c BuiltIn.c Special.c -Wall -I.
