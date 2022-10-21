@@ -1,26 +1,31 @@
 #include "library.h"
 
-
+//changes the directory
 int cd(char** input){ //working , have to do full path, like ../Project_0 to change dir
 
     if(chdir(input[1]) == -1){
         printf("%s",strerror(errno));
     }
+
     char cwd[1000];
     printf("\n%s\n",getcwd(cwd,sizeof(cwd)));
     return 0;
-
 }
 
-int dir(char** input){//working , have to do full path, like ./../etc to get
 
+//Not working the execute function
+int dir(char** input){//working , have to do full path, like ./../etc to get the directory 
+    //if no arugment is passed, prints the current directory
+   
     DIR* d;
     if(input[1] == NULL){
-        d = opendir(".");
-    }else{
+        d = opendir("./");
+    }
+    else{
         d = opendir(input[1]);
     } 
      if (d == NULL){
+        puts("Not working");
         puts("this directory doesn't exist");
 
         return -1; 
@@ -32,6 +37,7 @@ int dir(char** input){//working , have to do full path, like ./../etc to get
     //while the directory is not empty
     while(directory != NULL){
         printf("%s\t\t",directory->d_name);
+        //prints the directory
 
     
         directory = readdir(d); 
@@ -42,23 +48,7 @@ int dir(char** input){//working , have to do full path, like ./../etc to get
     return 0;
 }
 
-// int echo(char* input){//working but need working with parameters
-
-//     char copy[strlen(input)];
-//     strcpy(copy,input);
-    
-
-//     char* buffer;
-//     buffer = strtok(copy," \t");
-//     while(buffer != NULL){
-//         printf("%s ",buffer);
-//         buffer = strtok(NULL, " \t");
-//     }
-//     puts(" ");
-
-//     return 0;
-// }
-
+//prints out comment
 int echo(char** input){ //working but  //doesnt work the first time?????
     int i = 1;
     while(input[i] != NULL){
@@ -68,8 +58,8 @@ int echo(char** input){ //working but  //doesnt work the first time?????
     puts("builtin echo");
     return 0;
 }
-
-int enviro(char** input){ //working
+//prints the envrionment strings
+int environ(char** input){ //working
     int i = 0;
     while(input[i] != NULL){
         
@@ -80,22 +70,16 @@ int enviro(char** input){ //working
 
     return 0;
 }
-
+//quits out of the shell
 int quit(){//working
     exit(1);
 }
 
-int help(){ //need to use exec() 
 
-    FILE* file;
-    file = fopen("help.txt","r");
-    if(file == NULL){
-        strerror(errno);
-    }
-    return 0;
-}
 
-int help2(){//working
+
+//uses the more builtin to open the help folder
+int help(){//working
 
     char* bin = "/bin/";
     char binPath[1000];
@@ -124,7 +108,7 @@ int help2(){//working
     
     return 0;
 }
-
+//pauses the shell
 int pause(){ //working
 
     while ( getchar() !='\n'){
@@ -132,7 +116,7 @@ int pause(){ //working
     }
     return 0;
 }
-
+//clears the terminal screen
 int clear(){
     printf("\e[1;1H\e[2J");
     return 0;

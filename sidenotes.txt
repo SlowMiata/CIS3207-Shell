@@ -20,3 +20,126 @@ built-in
 //interactive mode when argc == 1
 
 
+
+// int echo(char* input){//working but need working with parameters
+
+//     char copy[strlen(input)];
+//     strcpy(copy,input);
+    
+
+//     char* buffer;
+//     buffer = strtok(copy," \t");
+//     while(buffer != NULL){
+//         printf("%s ",buffer);
+//         buffer = strtok(NULL, " \t");
+//     }
+//     puts(" ");
+
+//     return 0;
+// }
+
+
+int help(){ //need to use exec() 
+
+    FILE* file;
+    file = fopen("help.txt","r");
+    if(file == NULL){
+        strerror(errno);
+    }
+    return 0;
+}
+
+int externalBuiltin2(char** input){
+    char* command = input[0];
+    char* argument_list[1000];
+    int i =0;
+    while( input[i]!= NULL){
+        argument_list[i] = input[i];
+    }
+    argument_list[i+1] = NULL;
+    
+
+    pid_t pid = fork();
+    if(pid == -1){
+        printf("%s",strerror(errno));
+        return -1;
+    }
+
+    if(pid == 0){// in the child
+        //puts("i am the child");
+        execvp(command,argument_list);
+        printf("%s",strerror(errno));
+        exit(1);      //execute the external built in with the path and the certain argument
+
+    }else{//in the parent
+        wait(NULL);
+        //puts("i am the parent");
+    
+   // wait for the child to finish
+    }
+
+    return 0;   
+}
+
+// int executing(char** input){
+//     /*
+//     int PipeFlag = 0;
+//     int StdoutFlag = 0;
+//     int StdinFlag = 0;
+//     int ExternalFlag = 0;
+//     int BuiltInFlag = 0;
+
+//     first check if there are speical characters in the input
+//         if there are set the the flag to one
+//         then check if the first token is external
+//             if it is, set the externtalFlag = 1
+//         if the first token is equal to one of the builtin
+//             set the flag to 1;
+
+
+
+    
+//     */
+//     return 0;
+// }
+
+// int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation){
+
+//     int Originalstdin = dup(STDIN_FILENO);
+//     int Originalstdou = dup(STDOUT_FILENO);
+    
+//     //for >
+//     pid_t pid = fork();
+//     if(pid == -1){
+//         printf("%s",strerror(errno));
+//         return -1;
+//     }
+
+//     if(pid == 0){// in the child
+//         puts("i am the child");
+
+        
+
+
+//         int file = open("filename.txt",O_WRONLY | O_CREAT,0777);
+//         if(file == -1){
+//             printf("%s",strerror(errno));
+//         }
+
+//         dup2(file,STDOUT_FILENO);
+//         close(file);
+        
+    
+//         printf("%s",strerror(errno));
+//         exit(1);      
+
+
+//     }else{//in the parent
+//         wait(NULL);// wait for the child to finish
+//         puts("i am the parent");
+    
+   
+//     }
+    
+//     return 0;
+// }

@@ -14,7 +14,6 @@
 
 
 
-
 int cd(char** input);
 int help();
 int pause();
@@ -22,11 +21,10 @@ int quit();
 int echo(char** input);
 int clear();
 int dir(char** input);
-int enviro(char** input);
-
-int help2();
+int environ(char** input);
 
 
 int externalBuiltin(char** input);
 
 int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation);
+int piping(char** input, char** input2);

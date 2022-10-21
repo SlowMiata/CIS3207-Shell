@@ -12,6 +12,7 @@
 
 int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation);
 int externalBuiltin(char** input);
+int piping(char** input, char** input2);
 
 char*enviroment[] = {NULL};
 
@@ -19,7 +20,7 @@ int environt(char** input){
     int i = 0;
     while(input[i]!= NULL){
         
-        printf("%s: %s\n",(input[i]);
+        printf("%s\n",(input[i]));
         i++;
     }
 
@@ -39,7 +40,7 @@ int pause(){
         
     }
 
-return 0;
+    return 0;
 }
 int quit(){
     exit(1);
@@ -270,6 +271,17 @@ int checking(char**token){
             redirection(token,outputFile,inputFile,AppendFile,currentLocation);
             
         }
+        else if(strcmp( token[i], "|")== 0){
+            if (token[i + 1] == NULL){
+                puts("invalid argument");
+                return 0;
+            }
+            token[i] = NULL;
+            currentLocation = i;
+            char**  token2;
+
+
+        }
 
         i++;
         //going to have add pipe and background in here
@@ -291,7 +303,7 @@ int checking(char**token){
         }
         else if(strcmp(token[0], "environ") == 0){
 
-            enviro(enviroment);
+            environt(enviroment);
     
             
         }
@@ -328,32 +340,119 @@ int checking(char**token){
 }
 
 
+
+
+int piping(char** input, char** input2){
+
+    int fd[2];
+    if(pipe(fd) == - 1){
+        exit(1);
+    }
+
+    pid_t pid1 = fork();
+    if (pid1 < 0){
+        return 2;
+    }
+
+    if(pid1 == 0){
+        //proccess 1
+        //The left side of the pipe
+        //changes the output
+        puts("this is the first child");
+        close(1);
+        dup2(fd[1],STDOUT_FILENO);
+        close(fd[0]);
+        //close(fd[1]);
+        
+       // execv() the left side of the '|'
+       //just testing external commands right now
+       execvp(input[0],input);
+       printf("%s",strerror(errno));
+       
+       exit(1);
+    
+    }
+
+       //
+       // execv() the right side of the '|'
+       // somehow check if i can run it in the builtin or the external
+       //if execv returns from the the PWD
+       //then use call execv from the /bin/
+       //just like the externalbuiltin2
+    
+       
+       //execv(path to ls, "ls")
+
+    else{
+        //in parent
+        
+        //for the right right side of the pipe
+        pid_t pid2 = fork();
+        if (pid1 < 0){
+            return 2;
+        }
+
+        if(pid2 == 0){
+            //proccess 2
+            close(0);
+            dup2(fd[0],STDIN_FILENO);
+            //close(fd[0]);
+            close(fd[1]);
+
+            puts("This is the second command executing");
+            printf("%s\n",input2[0]);
+
+            execvp(input2[0],input2);
+            printf("%s",strerror(errno));
+            exit(1);
+        }
+        
+        else{
+            close(fd[0]);
+            close(fd[1]);
+            waitpid(pid1,NULL,0);
+            waitpid(pid2,NULL,0);
+            
+        }
+        puts("the piping has complete");
+    }
+
+    return 0;
+}
+
+
    
 
 
 
-int main(int argc, char **argv, char** envp){
+int main(int argc, char **argv, char* envp[]){
 
     char *built[] = {"cd","clear","dir","environment","help","echo","puase","quit", NULL};
     char *special[] = {">",">>","<","|","&"};
     char *test[] = {"dir",".vscode"};
+    char* input1[] = { "ls", "-al", NULL};
+    char* input2[] = { "grep", "a.txt", NULL};
 
-    enviroment = envp;
-    int i = 0;
-    char cwd[1000];
-    printf("\n%s\n",getcwd(cwd,sizeof(cwd)));
+    // enviroment = envp;
+    // int i = 0;
+    // char cwd[1000];
+    // printf("\n%s\n",getcwd(cwd,sizeof(cwd)));
    
-    while(1){
-        printf("UserShell>");
-        char* inputLine = input();
+    // while(1){
+    //     printf("UserShell>");
+    //     char* inputLine = input();
     
-        char** tokenize = tokenizingInput(inputLine); 
+    //     char** tokenize = tokenizingInput(inputLine); 
     
 
-        printf("%s",tokenize[0]);
-        checking(tokenize);
+    //     printf("%s",tokenize[0]);
+    //     checking(tokenize);
 
-    }
+    // }
+    puts("before piping");
+    piping(input1,input2);
+
+
     
     
     
