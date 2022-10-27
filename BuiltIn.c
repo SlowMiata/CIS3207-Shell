@@ -1,4 +1,5 @@
 #include "library.h"
+extern char* originalDirect;
 
 //changes the directory
 int cd(char** input){ //working , have to do full path, like ../Project_0 to change dir
@@ -6,14 +7,13 @@ int cd(char** input){ //working , have to do full path, like ../Project_0 to cha
     if(chdir(input[1]) == -1){
         printf("%s",strerror(errno));
     }
-
+    //setenv(PWD,cwd,1)
     char cwd[1000];
     printf("\n%s\n",getcwd(cwd,sizeof(cwd)));
     return 0;
 }
 
 
-//Not working the execute function
 int dir(char** input){//working , have to do full path, like ./../etc to get the directory 
     //if no arugment is passed, prints the current directory
    
@@ -55,7 +55,7 @@ int echo(char** input){ //working but  //doesnt work the first time?????
         printf("%s ",input[i]);
         i++;
     }
-    puts("builtin echo");
+    puts(" ");
     return 0;
 }
 //prints the envrionment strings
@@ -72,6 +72,7 @@ int environ(char** input){ //working
 }
 //quits out of the shell
 int quit(){//working
+    puts("leaving UserShell");
     exit(1);
 }
 
@@ -79,12 +80,16 @@ int quit(){//working
 
 
 //uses the more builtin to open the help folder
+//ADD FUCKING MORE TEXT AND CHANGE DIRECTORY
 int help(){//working
+    char helpFile[1000];
+    strcpy(helpFile,originalDirect);
+    strcat(helpFile,"/help.txt");
 
     char* bin = "/bin/";
     char binPath[1000];
     strcpy(binPath,bin);
-    char*help[] = {"more", "help.txt",NULL};
+    char*help[] = {"more", helpFile ,NULL};
     strcat(binPath,help[0]);
     
     pid_t pid = fork();
@@ -94,11 +99,9 @@ int help(){//working
     }
     
     if(pid == 0){// in the child
-        //puts("i am the child");
-        puts("working up till this point");
         execv(binPath,help);
         printf("%s",strerror(errno));
-        exit(1);      //execute the external built in with the path and the certain argument
+        exit(1);   
 
     }else
     {//in the parent
@@ -117,6 +120,7 @@ int pause(){ //working
     return 0;
 }
 //clears the terminal screen
+
 int clear(){
     printf("\e[1;1H\e[2J");
     return 0;

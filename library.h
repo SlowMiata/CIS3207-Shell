@@ -14,6 +14,8 @@
 
 
 
+
+
 int cd(char** input);
 int help();
 int pause();
@@ -25,6 +27,9 @@ int environ(char** input);
 
 
 int externalBuiltin(char** input);
+int executing(char** token);
+int interactive();
+
 
 int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation);
 int piping(char** input, char** input2);

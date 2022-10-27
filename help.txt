@@ -1,24 +1,59 @@
-                                            Help manual
+                                    Help Manual For using myshell
+                                            Written by: Tu Ha
 
-                    cd  - changes the current directory path
-                        if no arugment is passed with CD, then print current working directory
+
+
+                    This manual contains all the builtin functions in this MyShell Program
+                    
+
+
+
+                                    
+
+                    cd  - changes the current working directory path
+                        parameter: cd(char** arguemnt)
+                        if no arugment is passed with cd, then the current working directory path is printed
                         if there is an arguemnt, change the directory to the arugment
 
-                    dir - prints the files and subdirectories
+
+                    dir - prints the files and subdirectories of desired directory
+                        parameter: dir(char** input)
                         if no arugment are passed with dir, then print files and subdirectories of the current directory
-                        if ther is an arugment, print the files and subdirectories of the specified directory
+                        if there is an arugment, print the files and subdirectories of the specified directory
+
                     
-                    echo - prints whatever argument the user inputs
+                    echo - prints whatever the user passed as an arugment for echo
+                        parameter: echo(char** input)
+
 
                     environ - prints all the environment strings
+                        parameter: echo(void)
+                        does not take in any arguments
+
 
                     help - opens the help manual
+                        parameter: help(void)
+                        does not take in any arguments
 
                     pause - pauses the shell until the user Enter
+                        parameter: pause(void)
+                        does not take in any arguments
+                        until the user hits the Enter key, the shell will stop running
+
 
                     quit - exits out the shell
+                        parameter: quit(void)
+                        does not take in any arguments
+                        exits out the MyShell program and return to the linux terminal
+
 
                     clear - clears the terminal
+                        parameter: clear(void)
+                        does not take in any arguments
+                        clears the terminal page
+                        
+
+
                 
 
                 

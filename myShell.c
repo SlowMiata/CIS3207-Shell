@@ -1,15 +1,22 @@
 #include "library.h"
-
 char ** environment;
 char* curDirect;
-int executing(char** token);
+char* originalDirect;
+int pipeFound = 0;
+
 
 //for taking in the input in interactive mode
 char* input(){
     char* buffer;
     size_t size = 0;
+    
 
     getline(&buffer,&size, stdin); //stores what is inputted into buffer
+
+    if(strcmp(buffer,"\n")== 0){
+        interactive();
+    }
+
     int length = strlen(buffer);
     if (buffer[length - 1] == '\n'){
         buffer[length - 1] = '\0';
@@ -64,68 +71,17 @@ int externalBuiltin(char** input){ //cant call commands from other directories
 
     }else{//in the parent
         wait(NULL);
-        //puts("i am the parent");
     
-   // wait for the child to finish
     }
 
     return 0;   
 }
 
-int externalBuiltin2(char** input){ //SINce we can use EXECVP THIS IS POINTLESS
-
-
-    char* bin = "/bin/";
-    char binPath[1000];
-    strcpy(binPath,bin);
-    strcat(binPath,input[0]);
-
-    pid_t pid = fork();
-    if(pid == -1){
-        printf("%s",strerror(errno));
-        return -1;
-    }
-
-    if(pid == 0){   // in the child
-        //puts("i am the child");
-        //execv
-        int NotWorking = 0;
-        NotWorking = execv(binPath,input);
-            //printf("%s",strerror(errno));
-
-        if(NotWorking == -1){
-            char currentDirect[1000];
-            
-            strcat(curDirect,"/");
-            strcpy(currentDirect,curDirect);
-            strcat(currentDirect,input[0]);
-            //strcat(curDirect,"./");
-            execv(currentDirect,input);
-            printf("%s",strerror(errno));
-
-        }
-    
-        exit(1);      //executing the external built in with the path and the certain argument
-
-    }else{//in the parent
-        wait(NULL);
-        //puts("i am the parent");
-    
-   // wait for the child to finish
-    }
-
-    return 0;   
-}
-//append the file path to the end of bin and then run the command
-
-//check if its in bin, then check if its in the directory
 
 //--------------------------------------------------------------------------------//
 //char *built[] = {"cd","clear","dir","environ","help","echo","puase","quit"};
 //char *special[] = {">",">>","<","|","&"};
 //--------------------------------------------------------------------------------//
-
-
 
 int checking(char** token){
        
@@ -135,6 +91,8 @@ int checking(char** token){
     int inputFile = 0;
     int AppendFile = 0;
     int currentLocation = 0;
+    
+
     int Originalstdin = dup(STDIN_FILENO);
     int Originalstdou = dup(STDOUT_FILENO);
     
@@ -166,7 +124,7 @@ int checking(char** token){
             AppendFile = 1;
             currentLocation = i;
             redirection(token,outputFile,inputFile,AppendFile,currentLocation);
-            
+
         }
         //for inputing into another file            //not working right now
         else if(strcmp( token[i], "<")== 0){
@@ -180,14 +138,13 @@ int checking(char** token){
             redirection(token,outputFile,inputFile,AppendFile,currentLocation);
         }
 
-        else if( strcmp(token[i], "|") == 0){ //the piping works but not he inputs
+        else if( strcmp(token[i], "|") == 0){ //the piping work
             if (token[i + 1] == NULL){
                 puts("invalid argument");
                 return 0;
             }
-
+            pipeFound = 1;
             currentLocation = i;
-            
             char* input2[1000];
             //char** input2 = malloc( 1000 * sizeof(char*));
             int j = currentLocation + 1;
@@ -201,66 +158,23 @@ int checking(char** token){
             token[currentLocation] = NULL;
             
             piping(token,input2);
-            //working but still printing to terminal    
 
         }
-        else if( strcmp(token[i], "&") == 0){
+        else if(strcmp(token[i], "&") == 0){
     
             //run the background function
             //everything before the & execute
             //forking and having the child run the command and but then never call exit() 
         }
-            
-            
+      
 
         i++;
-       
     }
+    if(pipeFound == 0){
+        executing(originalToken);
 
-    //next have to check if there are builtins with the special characters
-    //could make this into a seperate function and call this function inside of checking special
-    //this way this could be called inside of my pipe
-        // if(strcmp(token[0], "cd") == 0){
-        //     //run the change cd function
-        //     cd(token);
-
-        // }
-        // else if(strcmp(token[0], "clear") == 0){
-        //     clear();
-            
-        // }
-        // else if(strcmp(token[0], "dir") == 0){
-        //     dir(token);
-            
-        // }
-        // else if(strcmp(token[0], "environ") == 0){
-        //     environ(environment);
+    }
     
-        // }
-        // else if(strcmp(token[0], "help") == 0){
-        //     help();
-            
-        // }
-        // else if(strcmp(token[0], "echo") == 0){
-        //     echo(token);
-            
-        // }
-        // else if(strcmp(token[0], "pause") == 0){
-        //     pause();
-            
-        // }
-        // else if(strcmp(token[0], "quit") == 0){
-        //     quit();
-
-            
-            
-        // }
-        // else{
-        //     //run the extranalbuiltin command 
-        //     externalBuiltin2(token);
-        // }
-    //set the file descriptors back to normal
-    executing(originalToken);
     dup2(Originalstdou, STDOUT_FILENO);
     dup2(Originalstdin, STDIN_FILENO);
     close(Originalstdou);
@@ -270,74 +184,72 @@ int checking(char** token){
     return 0;   
 }
 
-
-
 int executing(char** token){
+
     if(strcmp(token[0], "cd") == 0){
             //run the change cd function
-            cd(token);
+           return cd(token);
 
         }
-        else if(strcmp(token[0], "clear") == 0){
-            clear();
-            
-        }
-        else if(strcmp(token[0], "dir") == 0){
-           // printf("%s\n",token[1]);
-            dir(token);//not working correctly , issue with the char** passed through the function
-            
-        }
-        else if(strcmp(token[0], "environ") == 0){
-            environ(environment);
+    else if(strcmp(token[0], "clear") == 0){
+       return clear();
+        
+    }
+    else if(strcmp(token[0], "dir") == 0){
+        // if(dir(token) == -1){
+        //     return 0;
+        // }
+       return dir(token); 
+        
+    }
+    else if(strcmp(token[0], "environ") == 0){
+       return environ(environment);
+
+    }
+    else if(strcmp(token[0], "help") == 0){
+       return help();
+        
+    }
+    else if(strcmp(token[0], "echo") == 0){
+       return echo(token);
+        
+    }
+    else if(strcmp(token[0], "pause") == 0){
+      return pause();
+        
+    }
+    else if(strcmp(token[0], "quit") == 0){
+       return quit();
+        
+    }
+    // else if(pipeFound == 0){
+    //     externalBuiltin(token);
+    // }
+    else if(pipeFound == 0){
+        externalBuiltin(token);
+    }
     
-        }
-        else if(strcmp(token[0], "help") == 0){
-            help();
-            
-        }
-        else if(strcmp(token[0], "echo") == 0){
-            echo(token);//not working correctly
-            
-        }
-        else if(strcmp(token[0], "pause") == 0){
-            pause();
-            
-        }
-        else if(strcmp(token[0], "quit") == 0){
-            quit();
-            
-            
-        }
-        else{
-            //run the extranalbuiltin command 
-            externalBuiltin(token);
-        }
 
-    return 0;
+    return -2;
 }
-
 
 int batch(char* input){
 
     // FILE* file;
     // file = open(input,"O_readit");
     // char buffer[100];
-    
-
     return 0;
-
 }
 
 int interactive(){
     char cwd[1000];
     while(1){
         curDirect = getcwd(cwd,sizeof(cwd));
-        printf("\n%s\n",curDirect);
         printf("UserShell>");
         char* inputLine = input();
         char** tokenize = tokenizingInput(inputLine);
         checking(tokenize);
-        //executing(tokenize);  
+        pipeFound = 0; 
     }
     
     return 0;   
@@ -348,10 +260,13 @@ int main(int argc, char** argv, char**envp){
 
     if(argc == 1){
         environment = envp;
+        char cwd[1000];
+        originalDirect = getcwd(cwd,sizeof(cwd));
         interactive(); //can take inputs in from stdin
     }
     if ( argc == 2){
         batch(argv[1]); //executing commands from a file
+        //fgets
     }
     if (argc >= 3){
         puts("too many arguments");
