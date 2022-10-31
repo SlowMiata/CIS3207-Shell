@@ -234,3 +234,55 @@ int externalBuiltin2(char** input){ //SINce we can use EXECVP THIS IS POINTLESS
         //     externalBuiltin2(token);
         // }
     //set the file descriptors back to normal
+
+//
+// int main(int argc, char** argv, char**envp) {
+//     char* command = "dir";
+//     char* argument_list[] = {"dir", NULL};
+
+//     char** = ["dir",NULL];
+
+//     printf("Before calling execvp()\n");
+
+//     // Calling the execvp() system call
+//     int status_code = execvp(command, argument_list);
+
+//     if (status_code == -1) {
+//         printf("Process did not terminate correctly\n");
+//         exit(1);
+//     }
+
+//     printf("This line will not be printed if execvp() runs correctly\n");
+
+//     return 0;
+// }
+//
+//
+// int size = 1000;
+    // char buffer[size];
+    // int file = open(input, O_RDONLY);
+    // int bytes = read(file,buffer,size);
+    // buffer[bytes] = '\0';
+    
+    // char *p;
+    // char *temp;
+    // p = strtok_r(buffer, "\n", &temp);
+    // do {
+    //     printf("current line = %s\n", p);
+    //     char** tokenize = tokenizingInput(p);
+    //     checking(tokenize);
+    //     pipeFound = 0; 
+    // } while ((p = strtok_r(NULL, "\n", &temp)) != NULL);
+    
+
+    
+     // while(getline(&buffer, &size, file)){
+    //     int length = strlen(buffer);
+    //     if (buffer[length - 1] == '\n'){
+    //         buffer[length - 1] = '\0';
+    //     } 
+    //     printf("%s",buffer);
+    //     char** tokenize = tokenizingInput(buffer);
+    //     checking(tokenize);
+    //     pipeFound = 0; 
+    // } 

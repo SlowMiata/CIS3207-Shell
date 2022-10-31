@@ -11,11 +11,7 @@
 #include <sys/stat.h>
 
 
-
-
-
-
-
+//builtin
 int cd(char** input);
 int help();
 int pause();
@@ -25,11 +21,12 @@ int clear();
 int dir(char** input);
 int environ(char** input);
 
-
+//executing
 int externalBuiltin(char** input);
 int executing(char** token);
 int interactive();
 
-
+//specials
 int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation);
 int piping(char** input, char** input2);
+int background(char** input);

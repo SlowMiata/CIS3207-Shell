@@ -3,13 +3,12 @@ char ** environment;
 char* curDirect;
 char* originalDirect;
 int pipeFound = 0;
-
+int backgroundFound = 0;
 
 //for taking in the input in interactive mode
 char* input(){
     char* buffer;
     size_t size = 0;
-    
 
     getline(&buffer,&size, stdin); //stores what is inputted into buffer
 
@@ -33,16 +32,12 @@ char** tokenizingInput(char* input){
     size_t size = 100;
     int i = 0;
     token = (char**)malloc(size);
-
     buffer = strtok(changes," \t"); //remove the extra spaces
     while(buffer != NULL){//add the tokenize strings into an array of pointers
         token[i] = buffer;
         buffer = strtok(NULL, " \t");
         i++;
     }
-    // if ( i >= size){//increase the size of the array
-    //     token = realloc(token,size * 2);
-    // }
 
     token[i] = NULL;
 
@@ -58,17 +53,13 @@ int externalBuiltin(char** input){ //cant call commands from other directories
 
     pid_t pid = fork();
     if(pid == -1){
-        printf("%s",strerror(errno));
+        printf("%s\n",strerror(errno));
         return -1;
     }
-
     if(pid == 0){// in the child
-        //puts("i am the child");
-        //execv
         execvp(input[0],input);
-        printf("%s",strerror(errno));
-        exit(1);      //executing the external built in with the path and the certain argument
-
+        printf("%s\n",strerror(errno));
+        exit(1);    
     }else{//in the parent
         wait(NULL);
     
@@ -76,7 +67,6 @@ int externalBuiltin(char** input){ //cant call commands from other directories
 
     return 0;   
 }
-
 
 //--------------------------------------------------------------------------------//
 //char *built[] = {"cd","clear","dir","environ","help","echo","puase","quit"};
@@ -92,17 +82,26 @@ int checking(char** token){
     int AppendFile = 0;
     int currentLocation = 0;
     
-
     int Originalstdin = dup(STDIN_FILENO);
     int Originalstdou = dup(STDOUT_FILENO);
-    
 
-    //first check for speical characters
+    //checks for speical characters
     while(token[i] != NULL){
+        if( strcmp( token[i], "&")== 0){
+            if (i == 0){
+                puts("invalid argument");
+                return 0;
+            }
+            backgroundFound= 1;
+            token[i] = NULL;
+            background(token);
+        }
+    
+        //might have to check for '&' first
 
         //for outputing to another file
         if( strcmp( token[i], ">")== 0){
-            if (token[i + 1] == NULL){
+            if (token[i + 1] == NULL || i == 0){
                 puts("invalid argument");
                 return 0;
             }
@@ -116,7 +115,7 @@ int checking(char** token){
         }
         //for appending to another file
         else if(strcmp( token[i], ">>")== 0){
-            if (token[i + 1] == NULL){
+            if (token[i + 1] == NULL || i == 0){
                 puts("invalid argument");
                 return 0;
             }
@@ -126,9 +125,9 @@ int checking(char** token){
             redirection(token,outputFile,inputFile,AppendFile,currentLocation);
 
         }
-        //for inputing into another file            //not working right now
+        //for inputing into another file     
         else if(strcmp( token[i], "<")== 0){
-            if (token[i + 1] == NULL){
+            if (token[i + 1] == NULL || i == 0){
                 puts("invalid argument");
                 return 0;
             }
@@ -139,7 +138,7 @@ int checking(char** token){
         }
 
         else if( strcmp(token[i], "|") == 0){ //the piping work
-            if (token[i + 1] == NULL){
+            if (token[i + 1] == NULL || i == 0){
                 puts("invalid argument");
                 return 0;
             }
@@ -161,13 +160,13 @@ int checking(char** token){
 
         }
         else if(strcmp(token[i], "&") == 0){
-    
-            //run the background function
-            //everything before the & execute
-            //forking and having the child run the command and but then never call exit() 
+            if(i == 0){
+                puts("invalid argument");
+                return 0;
+
+            } 
         }
       
-
         i++;
     }
     if(pipeFound == 0){
@@ -180,25 +179,20 @@ int checking(char** token){
     close(Originalstdou);
     close(Originalstdin);
 
-
     return 0;   
 }
 
 int executing(char** token){
 
     if(strcmp(token[0], "cd") == 0){
-            //run the change cd function
-           return cd(token);
+        return cd(token);
 
-        }
+    }
     else if(strcmp(token[0], "clear") == 0){
        return clear();
         
     }
     else if(strcmp(token[0], "dir") == 0){
-        // if(dir(token) == -1){
-        //     return 0;
-        // }
        return dir(token); 
         
     }
@@ -222,22 +216,39 @@ int executing(char** token){
        return quit();
         
     }
-    // else if(pipeFound == 0){
-    //     externalBuiltin(token);
-    // }
+
     else if(pipeFound == 0){
         externalBuiltin(token);
     }
     
-
-    return -2;
+    return -1;
 }
 
 int batch(char* input){
-
-    // FILE* file;
-    // file = open(input,"O_readit");
-    // char buffer[100];
+    
+    FILE* file;
+    size_t size = 1000;
+    char buffer[size];
+    file = fopen(input,"rb");
+    if(!file){
+        printf("%s\n",strerror(errno));
+        return 0;
+    }
+    
+    while(fgets(buffer, size, file) != NULL){
+        if(buffer[0] == '\0'){
+            continue;
+        }
+        int length = strlen(buffer);
+        if (buffer[length - 1] == '\n'){
+            buffer[length - 1] = '\0';
+        }
+        char** tokenize = tokenizingInput(buffer);
+        checking(tokenize);
+        pipeFound = 0; 
+        backgroundFound = 0;
+    } 
+    fclose(file);
     return 0;
 }
 
@@ -245,28 +256,28 @@ int interactive(){
     char cwd[1000];
     while(1){
         curDirect = getcwd(cwd,sizeof(cwd));
-        printf("UserShell>");
+        printf("%s %s", cwd,"MyShell>");
         char* inputLine = input();
         char** tokenize = tokenizingInput(inputLine);
         checking(tokenize);
         pipeFound = 0; 
+        backgroundFound = 0;
     }
     
     return 0;   
 }
 
-
 int main(int argc, char** argv, char**envp){
+    environment = envp;
+    char cwd[1000];
+    originalDirect = getcwd(cwd,sizeof(cwd));
+    printf("\e[1;1H\e[2J");
 
     if(argc == 1){
-        environment = envp;
-        char cwd[1000];
-        originalDirect = getcwd(cwd,sizeof(cwd));
         interactive(); //can take inputs in from stdin
     }
     if ( argc == 2){
         batch(argv[1]); //executing commands from a file
-        //fgets
     }
     if (argc >= 3){
         puts("too many arguments");
@@ -276,28 +287,6 @@ int main(int argc, char** argv, char**envp){
    return 0;
 }
 
-//
-// int main(int argc, char** argv, char**envp) {
-//     char* command = "dir";
-//     char* argument_list[] = {"dir", NULL};
 
-//     char** = ["dir",NULL];
-
-//     printf("Before calling execvp()\n");
-
-//     // Calling the execvp() system call
-//     int status_code = execvp(command, argument_list);
-
-//     if (status_code == -1) {
-//         printf("Process did not terminate correctly\n");
-//         exit(1);
-//     }
-
-//     printf("This line will not be printed if execvp() runs correctly\n");
-
-//     return 0;
-// }
-//
-//
 
 

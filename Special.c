@@ -1,16 +1,14 @@
 #include "library.h"
 
+extern int backgroundFound;
 
-
-
-int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation){//still need adjustments, doesnt work the first time it is inputted
+int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int currentLocation){
 
     int OutputFile;
     int InputFile;
 
     //for >
     if(ReOuput == 1){
-        //printf("%s",input[currentLocation+1]);
         input[currentLocation] = NULL;
         OutputFile = open(input[currentLocation+1],O_WRONLY | O_CREAT | O_TRUNC,0777);
         dup2(OutputFile,STDOUT_FILENO);
@@ -31,7 +29,6 @@ int redirection(char** input, int ReOuput, int ReInput, int ReAppend, int curren
     }
     return 0;
 }
-
 
 int piping(char** input, char** input2){
     int NotWorking = 0;
@@ -54,32 +51,15 @@ int piping(char** input, char** input2){
         dup2(fd[1],STDOUT_FILENO);
         close(fd[0]);
         close(fd[1]);
-        
-       // execv() the left side of the '|'
-
-
-        // NotWorking = execvp(input[0],input);
-        // if(NotWorking == -1){
-        //     executing(input);
-        // }
+    
         NotWorking = executing(input);
         if(NotWorking == -1){
             execvp(input[0],input);
             printf("%s",strerror(errno));
         }
-
         exit(1);
     
     }
-
-       //
-       //execvp() the right side of the '|'
-       //somehow check if i can run it in the builtin or the external
-       //if execv returns from the the PWD
-       //then use call execv from the /bin/
-       //just like the externalbuiltin2
-
-       //execv(path to ls, "ls")
 
     else{
         //in parent
@@ -104,16 +84,49 @@ int piping(char** input, char** input2){
         else{
             close(fd[0]);
             close(fd[1]);
-            waitpid(pid1,NULL,0);
-            waitpid(pid2,NULL,0);
+            if(backgroundFound == 1){
 
+            }
+            else{
+                waitpid(pid1,NULL,0);
+                waitpid(pid2,NULL,0);
+
+            }
+            
         }
     }
 
     return 0;
 }
 
-int background(char** input){
+int background(char** input){//how to create a background process
+    int status;
+    int NotWorking = 0;
+    pid_t pid = fork();
+    if( pid <0){
+        printf("%s",strerror(errno));
+        return -1;
+    }
+    if(pid == 0){
+        NotWorking = executing(input);
+        if(NotWorking == -1){
+            puts("working");
+            execvp(input[0],input);
+            printf("%s",strerror(errno));
+        }
+        
+        exit(1);
+    }else{
+        if(backgroundFound == 1){
+            printf("[%d]",pid);
+        }
+        else{
+            waitpid(pid,&status,0); 
+        }
+
+    }
+
     return 0;
+
 }
 

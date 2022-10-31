@@ -4,10 +4,6 @@
 
 
                     This manual contains all the builtin functions in this MyShell Program
-                    
-
-
-
                                     
 
                     cd  - changes the current working directory path
@@ -31,9 +27,10 @@
                         does not take in any arguments
 
 
-                    help - opens the help manual
+                    help - opens this help manual
                         parameter: help(void)
                         does not take in any arguments
+                        the manual contains all eight builtin created in this program
 
                     pause - pauses the shell until the user Enter
                         parameter: pause(void)
@@ -51,6 +48,33 @@
                         parameter: clear(void)
                         does not take in any arguments
                         clears the terminal page
+
+
+
+
+                    This shell also support piping, redirection and running background proceses.
+                    
+                    ">" is for outputting to another file/command, it will also create the file if it doesn't exist already
+                        ex: echo hello world > hello.txt
+
+                    ">>" is for appending to another file/command, it will also create the file if it doesn't exist already
+                        ex: echo hello world >> hello.txt
+
+                    "<" is for inputting into another file/command
+                        ex: cat < hello.txt
+
+                    "|" is for passing information from one process or command to another process
+                        ex: ls -al | grep .txt
+
+                    "&" is for running a process in the background without the need for the user to interact with it
+                        ex: sleep 5 &
+                    
+
+                    External commands such as ls from /bin/ can still be used in this shell.
+
+
+
+                    end of Help Manual
                         
 
 

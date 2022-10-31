@@ -2,17 +2,19 @@
 extern char* originalDirect;
 
 //changes the directory
-int cd(char** input){ //working , have to do full path, like ../Project_0 to change dir
-
-    if(chdir(input[1]) == -1){
-        printf("%s",strerror(errno));
+int cd(char** input){ //working  have to do full path, like ../Project_0 to change dir
+    if(input[1] != NULL){
+        if(chdir(input[1]) == -1){
+        puts("invalid directory");
+        }
     }
+    
     //setenv(PWD,cwd,1)
     char cwd[1000];
-    printf("\n%s\n",getcwd(cwd,sizeof(cwd)));
+    printf("PWD:%s\n",getcwd(cwd,sizeof(cwd)));
+    setenv("PWD",cwd,1);
     return 0;
 }
-
 
 int dir(char** input){//working , have to do full path, like ./../etc to get the directory 
     //if no arugment is passed, prints the current directory
@@ -25,7 +27,6 @@ int dir(char** input){//working , have to do full path, like ./../etc to get the
         d = opendir(input[1]);
     } 
      if (d == NULL){
-        puts("Not working");
         puts("this directory doesn't exist");
 
         return -1; 
@@ -37,8 +38,6 @@ int dir(char** input){//working , have to do full path, like ./../etc to get the
     //while the directory is not empty
     while(directory != NULL){
         printf("%s\t\t",directory->d_name);
-        //prints the directory
-
     
         directory = readdir(d); 
     }
@@ -49,7 +48,7 @@ int dir(char** input){//working , have to do full path, like ./../etc to get the
 }
 
 //prints out comment
-int echo(char** input){ //working but  //doesnt work the first time?????
+int echo(char** input){ //working
     int i = 1;
     while(input[i] != NULL){
         printf("%s ",input[i]);
@@ -63,7 +62,6 @@ int environ(char** input){ //working
     int i = 0;
     while(input[i] != NULL){
         
-        //printf("%s:%s\n",(input[i]),getenv(input[i]));
         printf("%s\n",input[i]);
         i++;
     }
@@ -72,19 +70,15 @@ int environ(char** input){ //working
 }
 //quits out of the shell
 int quit(){//working
-    puts("leaving UserShell");
+    puts("leaving MyShell");
     exit(1);
 }
 
-
-
-
 //uses the more builtin to open the help folder
-//ADD FUCKING MORE TEXT AND CHANGE DIRECTORY
 int help(){//working
     char helpFile[1000];
     strcpy(helpFile,originalDirect);
-    strcat(helpFile,"/help.txt");
+    strcat(helpFile,"/readme_doc");
 
     char* bin = "/bin/";
     char binPath[1000];
@@ -97,7 +91,6 @@ int help(){//working
         printf("%s",strerror(errno));
         return -1;
     }
-    
     if(pid == 0){// in the child
         execv(binPath,help);
         printf("%s",strerror(errno));
@@ -108,7 +101,6 @@ int help(){//working
         wait(NULL);
         // wait for the child to finish
     }
-    
     return 0;
 }
 //pauses the shell
@@ -119,8 +111,7 @@ int pause(){ //working
     }
     return 0;
 }
-//clears the terminal screen
-
+//clears the terminal screen   
 int clear(){
     printf("\e[1;1H\e[2J");
     return 0;
