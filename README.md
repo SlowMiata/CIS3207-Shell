@@ -1,10 +1,6 @@
-# Project-2-F22
+# Shell
 
-#  Project 2: Developing a Linux Shell
-**NOTE** What follows is the only the introduction to the problem statement.  
-**The full Project 2 description is [here](https://github.com/CIS-3207-F22/Project-2-f22/blob/main/Project%202%20Developing%20a%20Linux%20Shell.pdf)**.   
-
-An **Introduction to Developing a Shells** for this project is found [here](https://github.com/CIS-3207-F22/Project-2-f22/blob/main/3207%20Introduction%20to%20Developing%20a%20Linux%20Shell.pdf).  
+#Developing a Linux Shell  
 
 In this project, you’ll build a simple Unix/Linux shell. The shell is the heart of the command-line interface, and thus is central to the Linux/Unix/C programming environment. Mastering use of the shell is necessary to become proficient in this world; knowing how the shell itself is built is the focus of this project.  
 There are three specific objectives to this assignment:
