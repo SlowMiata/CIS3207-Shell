@@ -74,7 +74,6 @@ int externalBuiltin(char** input){ //cant call commands from other directories
 //--------------------------------------------------------------------------------//
 
 int checking(char** token){
-       
     int i = 0;
     char** originalToken = token;
     int outputFile = 0;
@@ -99,7 +98,7 @@ int checking(char** token){
     
         //might have to check for '&' first
 
-        //for outputing to another file
+        //for outputting to another file
         if( strcmp( token[i], ">")== 0){
             if (token[i + 1] == NULL || i == 0){
                 puts("invalid argument");
@@ -108,8 +107,8 @@ int checking(char** token){
             //token[i] = NULL;
             outputFile = 1;
             currentLocation = i;
-            //call redirection(with the apporiate flags)
-            //function to set the file desciptors
+            //call redirection(with the appropiate flags)
+            //function to set the file descriptors
             redirection(token,outputFile,inputFile,AppendFile,currentLocation);
             
         }
@@ -125,7 +124,7 @@ int checking(char** token){
             redirection(token,outputFile,inputFile,AppendFile,currentLocation);
 
         }
-        //for inputing into another file     
+        //for inputting into another file     
         else if(strcmp( token[i], "<")== 0){
             if (token[i + 1] == NULL || i == 0){
                 puts("invalid argument");

@@ -7,18 +7,18 @@
                                     
 
                     cd  - changes the current working directory path
-                        parameter: cd(char** arguemnt)
-                        if no arugment is passed with cd, then the current working directory path is printed
-                        if there is an arguemnt, change the directory to the arugment
+                        parameter: cd(char** argument)
+                        if no argument is passed with cd, then the current working directory path is printed
+                        if there is an argument, change the directory to the argument
 
 
                     dir - prints the files and subdirectories of desired directory
                         parameter: dir(char** input)
-                        if no arugment are passed with dir, then print files and subdirectories of the current directory
-                        if there is an arugment, print the files and subdirectories of the specified directory
+                        if no argument are passed with dir, then print files and subdirectories of the current directory
+                        if there is an argument, print the files and subdirectories of the specified directory
 
                     
-                    echo - prints whatever the user passed as an arugment for echo
+                    echo - prints whatever the user passed as an argument for echo
                         parameter: echo(char** input)
 
 
@@ -52,7 +52,7 @@
 
 
 
-                    This shell also support piping, redirection and running background proceses.
+                    This shell also support piping, redirection and running background process.
                     
                     ">" is for outputting to another file/command, it will also create the file if it doesn't exist already
                         ex: echo hello world > hello.txt
